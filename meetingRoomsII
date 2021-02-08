@@ -1,0 +1,27 @@
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        if(intervals == null || intervals.length == 0){
+            return 0;
+        }
+        
+        //sort using lambda function by start time
+        Arrays.sort(intervals, (a,b) -> a[0] - b[0]); // run = O(nlogn)
+        //create minheap
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a,b) -> a[1] - b[1]); // space = o(n)
+        minHeap.add(intervals[0]);
+        for(int i=1; i<intervals.length; i++){
+            int[] curr = intervals[i];
+            int[] prev = minHeap.poll();
+            if(curr[0] < prev[1]){
+                minHeap.add(prev);
+                minHeap.add(curr);
+            }
+            else{
+                //update prev's end time to curr's end time since u can use both in the same room
+                prev[1] = curr[1];
+                minHeap.add(prev);
+            }
+        }
+        return minHeap.size();
+    }
+}
